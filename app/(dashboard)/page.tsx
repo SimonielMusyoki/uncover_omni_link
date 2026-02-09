@@ -91,14 +91,14 @@ function KPICard({
 // Integration Status Card
 function IntegrationCard({
   name,
-  shortName,
+  iconUrl,
   color,
   status,
   lastSync,
   ordersToday,
 }: {
   name: string;
-  shortName: string;
+  iconUrl: string;
   color: string;
   status: string;
   lastSync?: string;
@@ -110,9 +110,9 @@ function IntegrationCard({
     <div className="bg-white rounded-xl border border-slate-200 p-4 hover:shadow-md transition-shadow">
       <div className="flex items-center justify-between mb-3">
         <div
-          className={`w-10 h-10 rounded-lg ${color} flex items-center justify-center text-white font-bold text-sm`}
+          className={`w-10 h-10 rounded-lg white flex items-center justify-center text-white font-bold text-sm p-1`}
         >
-          {shortName}
+          <img src={`/icons/${iconUrl}.png`} alt={`${name} icon`} />
         </div>
         <div className="flex items-center gap-1.5">
           <span

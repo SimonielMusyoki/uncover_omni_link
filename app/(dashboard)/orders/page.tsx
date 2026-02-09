@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import {
   Search,
   Filter,
@@ -366,11 +367,13 @@ function OrderDetailModal({
 }
 
 // Order Row Component
-function OrderRow({ order, onClick }: { order: Order; onClick: () => void }) {
+function OrderRow({ order }: { order: Order }) {
+  const router = useRouter();
+
   return (
     <tr
       className="hover:bg-slate-50/50 cursor-pointer transition-colors"
-      onClick={onClick}
+      onClick={() => router.push(`/orders/${order.id}`)}
     >
       <td className="px-4 py-4">
         <div>
@@ -417,10 +420,10 @@ function OrderRow({ order, onClick }: { order: Order; onClick: () => void }) {
           className="p-2 hover:bg-slate-100 rounded-lg"
           onClick={(e) => {
             e.stopPropagation();
-            onClick();
+            router.push(`/orders/${order.id}`);
           }}
         >
-          <MoreVertical size={16} className="text-slate-400" />
+          <ExternalLink size={16} className="text-slate-400" />
         </button>
       </td>
     </tr>
@@ -547,11 +550,7 @@ export default function OrdersPage() {
               </thead>
               <tbody className="divide-y divide-slate-100">
                 {filteredOrders.map((order) => (
-                  <OrderRow
-                    key={order.id}
-                    order={order}
-                    onClick={() => setSelectedOrder(order)}
-                  />
+                  <OrderRow key={order.id} order={order} />
                 ))}
               </tbody>
             </table>

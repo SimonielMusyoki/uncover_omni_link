@@ -107,6 +107,29 @@ export interface Order {
   updatedAt: string;
   fulfilledAt?: string;
   deliveredAt?: string;
+  events?: OrderEvent[];
+}
+
+export interface OrderEvent {
+  id: string;
+  type:
+    | "created"
+    | "payment_received"
+    | "synced_odoo"
+    | "synced_quickbooks"
+    | "synced_delivery"
+    | "processing"
+    | "fulfilled"
+    | "shipped"
+    | "out_for_delivery"
+    | "delivered"
+    | "cancelled"
+    | "failed"
+    | "note";
+  title: string;
+  description?: string;
+  timestamp: string;
+  metadata?: Record<string, string>;
 }
 
 export interface OrderItem {
@@ -135,6 +158,23 @@ export interface Product {
   image: string;
   description?: string;
   warehouseId?: string;
+}
+
+export interface ProductMapping {
+  id: string;
+  productId: string;
+  market: "Kenya" | "Nigeria";
+  shopifyId?: string;
+  shopifyHandle?: string;
+  odooId?: string;
+  odooName?: string;
+  quickbooksId?: string;
+  quickbooksName?: string;
+  letaAiId?: string;
+  letaAiName?: string;
+  rendaId?: string;
+  rendaName?: string;
+  updatedAt: string;
 }
 
 export interface Warehouse {
@@ -239,7 +279,7 @@ export interface UserPreferences {
 export interface Integration {
   id: string;
   name: string;
-  shortName: string;
+  iconUrl: string;
   color: string;
   status: "Connected" | "Live" | "Disconnected" | "Error";
   lastSync?: string;

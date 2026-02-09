@@ -4,6 +4,7 @@ import React, { createContext, useContext, useState, useCallback } from "react";
 import {
   Product,
   ProductRequest,
+  ProductMapping,
   RequestStatus,
   Order,
   OrderSource,
@@ -128,6 +129,14 @@ interface AppContextType {
       "id" | "createdAt" | "lastLogin" | "isActive" | "preferences" | "avatar"
     >,
   ) => void;
+  productMappings: ProductMapping[];
+  handleUpdateProductMapping: (
+    productId: string,
+    market: "Kenya" | "Nigeria",
+    mappings: Partial<
+      Omit<ProductMapping, "id" | "productId" | "market" | "updatedAt">
+    >,
+  ) => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -145,6 +154,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const [shipments, setShipments] = useState<Shipment[]>(initialShipments);
   const [activityLog, setActivityLog] =
     useState<ActivityLog[]>(initialActivityLog);
+  const [productMappings, setProductMappings] = useState<ProductMapping[]>([]);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [toast, setToast] = useState<ToastState | null>(null);
 
@@ -884,6 +894,54 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     [addActivity, showToast],
   );
 
+  const handleUpdateProductMapping = useCallback(
+    (
+      productId: string,
+      market: "Kenya" | "Nigeria",
+      mappings: Partial<
+        Omit<ProductMapping, "id" | "productId" | "market" | "updatedAt">
+      >,
+    ) => {
+      setProductMappings((prev) => {
+        const existingIndex = prev.findIndex(
+          (m) => m.productId === productId && m.market === market,
+        );
+
+        if (existingIndex >= 0) {
+          // Update existing mapping
+          const updated = [...prev];
+          updated[existingIndex] = {
+            ...updated[existingIndex],
+            ...mappings,
+            updatedAt: new Date().toISOString(),
+          };
+          return updated;
+        } else {
+          // Create new mapping
+          const newMapping: ProductMapping = {
+            id: `mapping-${Date.now()}`,
+            productId,
+            market,
+            ...mappings,
+            updatedAt: new Date().toISOString(),
+          };
+          return [...prev, newMapping];
+        }
+      });
+
+      const product = products.find((p) => p.id === productId);
+      addActivity({
+        type: "sync",
+        message: "Product mapping updated",
+        details: `${product?.name || productId} - ${market}`,
+        userId: currentUser.id,
+        userName: currentUser.name,
+      });
+      showToast("Product mapping updated successfully", "success");
+    },
+    [products, addActivity, showToast],
+  );
+
   // ==================== CONTEXT VALUE ====================
 
   return (
@@ -928,6 +986,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         handleBulkTransferInventory,
         handleAddWarehouse,
         handleInviteUser,
+        productMappings,
+        handleUpdateProductMapping,
       }}
     >
       {children}

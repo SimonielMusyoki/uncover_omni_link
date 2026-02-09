@@ -15,6 +15,8 @@ import {
   Users,
   ChevronRight,
   ArrowLeftRight,
+  Link2,
+  TrendingUp,
 } from "lucide-react";
 import { useApp } from "@/lib/context";
 import {
@@ -121,6 +123,7 @@ export function Sidebar() {
       <nav className="flex-1 px-4 py-2 overflow-y-auto custom-scrollbar">
         <NavSection title="Overview">
           <NavItem href="/" icon={LayoutDashboard} label="Dashboard" />
+          <NavItem href="/sales" icon={TrendingUp} label="Sales" />
         </NavSection>
 
         <NavSection title="Operations">
@@ -151,6 +154,7 @@ export function Sidebar() {
           <NavItem href="/inventory" icon={Package} label="Products" />
           <NavItem href="/transfers" icon={ArrowLeftRight} label="Transfers" />
           <NavItem href="/warehouse" icon={WarehouseIcon} label="Warehouses" />
+          <NavItem href="/mappings" icon={Link2} label="Product Mappings" />
         </NavSection>
 
         <NavSection title="Administration">
