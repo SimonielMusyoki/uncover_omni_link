@@ -1,6 +1,12 @@
 "use client";
 
-import React, { createContext, useContext, useState, useCallback } from "react";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useCallback,
+  useMemo,
+} from "react";
 import {
   Product,
   ProductRequest,
@@ -35,6 +41,7 @@ import {
   getManagers,
   getSupplyChainTeam,
 } from "@/lib/data";
+import { CONFIG } from "@/lib/constants/config";
 
 // ==================== TOAST STATE ====================
 
@@ -164,7 +171,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const showToast = useCallback(
     (message: string, type: ToastState["type"] = "success") => {
       setToast({ message, type });
-      setTimeout(() => setToast(null), 4000);
+      setTimeout(() => setToast(null), CONFIG.TOAST_DURATION);
     },
     [],
   );
@@ -176,7 +183,10 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         id: `act-${Date.now()}`,
         timestamp: new Date().toISOString(),
       };
-      setActivityLog((prev) => [newActivity, ...prev.slice(0, 49)]);
+      setActivityLog((prev) => [
+        newActivity,
+        ...prev.slice(0, CONFIG.MAX_ACTIVITY_LOG_ITEMS - 1),
+      ]);
     },
     [],
   );
@@ -404,7 +414,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
           ),
         );
         showToast(`${newOrder.id} synced to Odoo`, "success");
-      }, 1500);
+      }, CONFIG.SYNC_DELAYS.odoo);
 
       setTimeout(() => {
         setOrders((prev) =>
@@ -415,7 +425,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
           ),
         );
         showToast(`${newOrder.id} synced to QuickBooks`, "success");
-      }, 2500);
+      }, CONFIG.SYNC_DELAYS.quickbooks);
     },
     [products, orders.length, addActivity, showToast],
   );
@@ -441,7 +451,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
           }),
         );
         showToast(`${orderId} synced to ${target} successfully`, "success");
-      }, 1500);
+      }, CONFIG.SYNC_DELAYS.odoo);
     },
     [showToast],
   );
@@ -944,55 +954,94 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   // ==================== CONTEXT VALUE ====================
 
-  return (
-    <AppContext.Provider
-      value={{
-        currentUser,
-        integrations,
-        kpis,
-        requests,
-        orders,
-        warehouses,
-        products,
-        users,
-        shipments,
-        activityLog,
-        managers,
-        supplyChainTeam,
-        selectedProduct,
-        setSelectedProduct,
-        toast,
-        showToast,
-        handleNewRequest,
-        handleApproveRequest,
-        handleRejectRequest,
-        handleMarkReady,
-        handleMarkCollected,
-        handleSimulateShopifyOrder,
-        handleSyncOrder,
-        handleFulfillOrder,
-        handleMarkDelivered,
-        handleFetchShopifyStatus,
-        handleCreateShipment,
-        handleUpdateShipmentStatus,
-        handleReceiveShipment,
-        handleUpdateUserPreferences,
-        handleToggleUserStatus,
-        handleAddProduct,
-        handleUpdateProduct,
-        handleUpdateProductImage,
-        handleDeleteProduct,
-        handleTransferInventory,
-        handleBulkTransferInventory,
-        handleAddWarehouse,
-        handleInviteUser,
-        productMappings,
-        handleUpdateProductMapping,
-      }}
-    >
-      {children}
-    </AppContext.Provider>
+  const contextValue = useMemo(
+    () => ({
+      currentUser,
+      integrations,
+      kpis,
+      requests,
+      orders,
+      warehouses,
+      products,
+      users,
+      shipments,
+      activityLog,
+      managers,
+      supplyChainTeam,
+      selectedProduct,
+      setSelectedProduct,
+      toast,
+      showToast,
+      handleNewRequest,
+      handleApproveRequest,
+      handleRejectRequest,
+      handleMarkReady,
+      handleMarkCollected,
+      handleSimulateShopifyOrder,
+      handleSyncOrder,
+      handleFulfillOrder,
+      handleMarkDelivered,
+      handleFetchShopifyStatus,
+      handleCreateShipment,
+      handleUpdateShipmentStatus,
+      handleReceiveShipment,
+      handleUpdateUserPreferences,
+      handleToggleUserStatus,
+      handleAddProduct,
+      handleUpdateProduct,
+      handleUpdateProductImage,
+      handleDeleteProduct,
+      handleTransferInventory,
+      handleBulkTransferInventory,
+      handleAddWarehouse,
+      handleInviteUser,
+      productMappings,
+      handleUpdateProductMapping,
+    }),
+    [
+      integrations,
+      kpis,
+      requests,
+      orders,
+      warehouses,
+      products,
+      users,
+      shipments,
+      activityLog,
+      managers,
+      supplyChainTeam,
+      selectedProduct,
+      toast,
+      showToast,
+      handleNewRequest,
+      handleApproveRequest,
+      handleRejectRequest,
+      handleMarkReady,
+      handleMarkCollected,
+      handleSimulateShopifyOrder,
+      handleSyncOrder,
+      handleFulfillOrder,
+      handleMarkDelivered,
+      handleFetchShopifyStatus,
+      handleCreateShipment,
+      handleUpdateShipmentStatus,
+      handleReceiveShipment,
+      handleUpdateUserPreferences,
+      handleToggleUserStatus,
+      handleAddProduct,
+      handleUpdateProduct,
+      handleUpdateProductImage,
+      handleDeleteProduct,
+      handleTransferInventory,
+      handleBulkTransferInventory,
+      handleAddWarehouse,
+      handleInviteUser,
+      productMappings,
+      handleUpdateProductMapping,
+    ],
   );
+
+  return <AppContext.Provider value={contextValue}>{children}</AppContext.Provider>;
 }
 
 // ==================== HOOK ====================
