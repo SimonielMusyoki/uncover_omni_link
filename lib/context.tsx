@@ -999,6 +999,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       handleUpdateProductMapping,
     }),
     [
+      currentUser,
       integrations,
       kpis,
       requests,
