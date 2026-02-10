@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { Product, StockStatus } from "@/lib/types";
 import { useApp } from "@/lib/context";
+import { CONFIG } from "@/lib/constants/config";
 
 // ==================== IMAGE UPLOAD COMPONENT ====================
 
@@ -55,7 +56,7 @@ export function ImageUpload({
         return;
       }
 
-      if (file.size > 5 * 1024 * 1024) {
+      if (file.size > CONFIG.MAX_UPLOAD_SIZE) {
         alert("Image must be less than 5MB");
         return;
       }
@@ -72,7 +73,7 @@ export function ImageUpload({
           setPreview(result);
           onImageChange(result);
           setIsUploading(false);
-        }, 800);
+        }, CONFIG.UPLOAD_SIMULATE_DELAY);
       };
       reader.readAsDataURL(file);
     },

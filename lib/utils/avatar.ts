@@ -6,18 +6,18 @@
  * Generates a consistent color for an avatar based on the name
  * Uses a hash of the name to select from predefined colors
  * @param name User's name
- * @returns Tailwind CSS color class
+ * @returns Hex color code
  */
 export function getAvatarColor(name: string): string {
   const colors = [
-    "bg-blue-500",
-    "bg-green-500",
-    "bg-purple-500",
-    "bg-pink-500",
-    "bg-yellow-500",
-    "bg-red-500",
-    "bg-indigo-500",
-    "bg-cyan-500",
+    "#3b82f6", // blue
+    "#10b981", // green
+    "#8b5cf6", // purple
+    "#f59e0b", // amber
+    "#ef4444", // red
+    "#06b6d4", // cyan
+    "#ec4899", // pink
+    "#6366f1", // indigo
   ];
 
   // Simple hash function to get consistent color for same name
