@@ -26,43 +26,22 @@ import {
   type ProductRequest,
   type User as UserType,
 } from "@/lib/types";
+import { RequestStatusBadge } from "@/components/ui/Badges";
 
-// Request Status Badge
+// Request Status Badge with Icon
 function StatusBadge({ status }: { status: RequestStatus }) {
-  const configs: Record<
-    RequestStatus,
-    { color: string; icon: React.ReactNode }
-  > = {
-    [RequestStatus.PENDING_APPROVAL]: {
-      color: "bg-amber-100 text-amber-700 border-amber-200",
-      icon: <Clock size={12} />,
-    },
-    [RequestStatus.APPROVED]: {
-      color: "bg-blue-100 text-blue-700 border-blue-200",
-      icon: <CheckCircle2 size={12} />,
-    },
-    [RequestStatus.REJECTED]: {
-      color: "bg-red-100 text-red-700 border-red-200",
-      icon: <XCircle size={12} />,
-    },
-    [RequestStatus.READY_FOR_COLLECTION]: {
-      color: "bg-purple-100 text-purple-700 border-purple-200",
-      icon: <Package size={12} />,
-    },
-    [RequestStatus.COLLECTED]: {
-      color: "bg-green-100 text-green-700 border-green-200",
-      icon: <CheckCircle2 size={12} />,
-    },
+  const icons: Record<RequestStatus, React.ReactNode> = {
+    [RequestStatus.PENDING_APPROVAL]: <Clock size={12} />,
+    [RequestStatus.APPROVED]: <CheckCircle2 size={12} />,
+    [RequestStatus.REJECTED]: <XCircle size={12} />,
+    [RequestStatus.READY_FOR_COLLECTION]: <Package size={12} />,
+    [RequestStatus.COLLECTED]: <CheckCircle2 size={12} />,
   };
 
-  const config = configs[status];
-
   return (
-    <span
-      className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase border ${config.color}`}
-    >
-      {config.icon}
-      {status.replace(/_/g, " ")}
+    <span className="inline-flex items-center gap-1">
+      {icons[status]}
+      <RequestStatusBadge status={status} size="sm" />
     </span>
   );
 }

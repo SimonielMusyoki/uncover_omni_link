@@ -24,40 +24,23 @@ import {
   type UserPreferences,
 } from "@/lib/types";
 import { InviteUserModal } from "@/components/ui/UserInviteForm";
+import { UserRoleBadge, ActiveStatusBadge } from "@/components/ui/Badges";
+import { getAvatarColor, getInitials } from "@/lib/utils/avatar";
 
-// Role Badge
+// Role Badge  
 function RoleBadge({ role }: { role: UserRole }) {
-  const configs: Record<UserRole, { color: string; icon: React.ReactNode }> = {
-    [UserRole.ADMIN]: {
-      color: "bg-red-100 text-red-700 border-red-200",
-      icon: <Shield size={12} />,
-    },
-    [UserRole.SUPPLY_CHAIN_LEAD]: {
-      color: "bg-purple-100 text-purple-700 border-purple-200",
-      icon: <Shield size={12} />,
-    },
-    [UserRole.SUPPLY_CHAIN]: {
-      color: "bg-blue-100 text-blue-700 border-blue-200",
-      icon: <User size={12} />,
-    },
-    [UserRole.MANAGER]: {
-      color: "bg-amber-100 text-amber-700 border-amber-200",
-      icon: <Shield size={12} />,
-    },
-    [UserRole.EMPLOYEE]: {
-      color: "bg-slate-100 text-slate-700 border-slate-200",
-      icon: <User size={12} />,
-    },
+  const icons: Record<UserRole, React.ReactNode> = {
+    [UserRole.ADMIN]: <Shield size={12} />,
+    [UserRole.SUPPLY_CHAIN_LEAD]: <Shield size={12} />,
+    [UserRole.SUPPLY_CHAIN]: <User size={12} />,
+    [UserRole.MANAGER]: <Shield size={12} />,
+    [UserRole.EMPLOYEE]: <User size={12} />,
   };
 
-  const config = configs[role];
-
   return (
-    <span
-      className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase border ${config.color}`}
-    >
-      {config.icon}
-      {role.replace(/_/g, " ")}
+    <span className="inline-flex items-center gap-1">
+      {icons[role]}
+      <UserRoleBadge role={role} size="sm" />
     </span>
   );
 }
@@ -65,15 +48,9 @@ function RoleBadge({ role }: { role: UserRole }) {
 // Status Badge
 function StatusBadge({ isActive }: { isActive: boolean }) {
   return (
-    <span
-      className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase border ${
-        isActive
-          ? "bg-green-100 text-green-700 border-green-200"
-          : "bg-slate-100 text-slate-500 border-slate-200"
-      }`}
-    >
+    <span className="inline-flex items-center gap-1">
       {isActive ? <CheckCircle2 size={12} /> : <XCircle size={12} />}
-      {isActive ? "Active" : "Inactive"}
+      <ActiveStatusBadge isActive={isActive} size="sm" />
     </span>
   );
 }
@@ -109,23 +86,6 @@ function UserDetailModal({
     setHasChanges(false);
   };
 
-  // Generate avatar color from user name
-  const getAvatarColor = (name: string) => {
-    const colors = [
-      "#3b82f6",
-      "#10b981",
-      "#8b5cf6",
-      "#f59e0b",
-      "#ef4444",
-      "#06b6d4",
-    ];
-    let hash = 0;
-    for (let i = 0; i < name.length; i++) {
-      hash = name.charCodeAt(i) + ((hash << 5) - hash);
-    }
-    return colors[Math.abs(hash) % colors.length];
-  };
-
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
       <div className="bg-white rounded-2xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-hidden">
@@ -135,10 +95,7 @@ function UserDetailModal({
               className="w-14 h-14 rounded-full flex items-center justify-center text-white text-xl font-bold"
               style={{ backgroundColor: getAvatarColor(user.name) }}
             >
-              {user.name
-                .split(" ")
-                .map((n) => n[0])
-                .join("")}
+              {getInitials(user.name)}
             </div>
             <div>
               <h2 className="text-xl font-bold text-slate-900">{user.name}</h2>
@@ -368,23 +325,6 @@ function UserDetailModal({
 
 // User Row
 function UserRow({ user, onClick }: { user: UserType; onClick: () => void }) {
-  // Generate avatar color from user name
-  const getAvatarColor = (name: string) => {
-    const colors = [
-      "#3b82f6",
-      "#10b981",
-      "#8b5cf6",
-      "#f59e0b",
-      "#ef4444",
-      "#06b6d4",
-    ];
-    let hash = 0;
-    for (let i = 0; i < name.length; i++) {
-      hash = name.charCodeAt(i) + ((hash << 5) - hash);
-    }
-    return colors[Math.abs(hash) % colors.length];
-  };
-
   return (
     <tr
       className="hover:bg-slate-50/50 cursor-pointer transition-colors"
@@ -396,10 +336,7 @@ function UserRow({ user, onClick }: { user: UserType; onClick: () => void }) {
             className="w-10 h-10 rounded-full flex items-center justify-center text-white text-sm font-bold"
             style={{ backgroundColor: getAvatarColor(user.name) }}
           >
-            {user.name
-              .split(" ")
-              .map((n) => n[0])
-              .join("")}
+            {getInitials(user.name)}
           </div>
           <div>
             <p className="font-semibold text-slate-900">{user.name}</p>

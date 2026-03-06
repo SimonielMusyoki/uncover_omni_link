@@ -24,6 +24,8 @@ import {
   ShipmentStatus,
   OrderSource,
 } from "@/lib/types";
+import { OrderStatusBadge } from "@/components/ui/Badges";
+import { getTimeAgo } from "@/lib/utils/time";
 
 // KPI Card Component
 function KPICard({
@@ -147,15 +149,6 @@ function RecentOrderRow({
     source: OrderSource;
   };
 }) {
-  const statusColors: Record<OrderStatus, string> = {
-    [OrderStatus.PENDING]: "bg-slate-100 text-slate-700",
-    [OrderStatus.PROCESSING]: "bg-blue-100 text-blue-700",
-    [OrderStatus.IN_TRANSIT]: "bg-purple-100 text-purple-700",
-    [OrderStatus.DELIVERED]: "bg-green-100 text-green-700",
-    [OrderStatus.CANCELLED]: "bg-red-100 text-red-700",
-    [OrderStatus.FAILED]: "bg-red-100 text-red-700",
-  };
-
   return (
     <div className="flex items-center justify-between py-3 border-b border-slate-100 last:border-0">
       <div className="flex items-center gap-3">
@@ -172,11 +165,7 @@ function RecentOrderRow({
         </div>
       </div>
       <div className="flex items-center gap-3">
-        <span
-          className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase ${statusColors[order.status]}`}
-        >
-          {order.status}
-        </span>
+        <OrderStatusBadge status={order.status} size="sm" />
         <span className="text-sm font-bold text-slate-900">
           {order.currency} {order.total.toLocaleString()}
         </span>
@@ -213,15 +202,6 @@ function ActivityItem({
     user: "bg-slate-100 text-slate-600",
   };
 
-  const timeAgo = (timestamp: string) => {
-    const diff = Date.now() - new Date(timestamp).getTime();
-    const mins = Math.floor(diff / 60000);
-    if (mins < 60) return `${mins}m ago`;
-    const hours = Math.floor(mins / 60);
-    if (hours < 24) return `${hours}h ago`;
-    return `${Math.floor(hours / 24)}d ago`;
-  };
-
   return (
     <div className="flex gap-3 py-3 border-b border-slate-100 last:border-0">
       <div
@@ -236,7 +216,7 @@ function ActivityItem({
         )}
         <p className="text-[10px] text-slate-400 mt-1">
           {activity.userName && `${activity.userName} • `}
-          {timeAgo(activity.timestamp)}
+          {getTimeAgo(activity.timestamp)}
         </p>
       </div>
     </div>
